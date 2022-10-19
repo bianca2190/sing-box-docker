@@ -9,6 +9,7 @@ on:
         description: "The tag version you want to build"
 jobs:
   clone:
+    runs-on: ubuntu-latest
     steps:
       - name: Clone source
         run: |
