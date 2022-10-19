@@ -32,8 +32,8 @@ jobs:
           images: ghcr.io/skyxim/sing-box
       - name: Get tag to build
         id: tag
-        working-directory: sing-box
         run: |
+          cd ./sing-box
           if [[ -z "${{ github.event.inputs.tag }}" ]]; then
             echo ::set-output name=tag::ghcr.io/skyxim/sing-box:${{ github.ref_name }}
           else
