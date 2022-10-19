@@ -8,19 +8,12 @@ on:
       tag:
         description: "The tag version you want to build"
 jobs:
-  clone:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Clone source
         run: |
           sudo apt install -y git && git clone -b main https://github.com/SagerNet/sing-box.git sing-box
-  build:
-    needs: [clone]
-    defaults:
-      run:
-        working-directory: sing-box
-    runs-on: ubuntu-latest
-    steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup Docker Buildx
@@ -38,6 +31,7 @@ jobs:
           images: ghcr.io/skyxim/sing-box
       - name: Get tag to build
         id: tag
+        working-directory: sing-box
         run: |
           if [[ -z "${{ github.event.inputs.tag }}" ]]; then
             echo ::set-output name=tag::ghcr.io/skyxim/sing-box:${{ github.ref_name }}
@@ -47,6 +41,7 @@ jobs:
       - name: Build and release Docker images
         uses: docker/build-push-action@v2
         with:
+          context: ./sing-box
           platforms: linux/amd64,linux/arm64
           target: dist
           tags: ${{ steps.tag.outputs.tag }}
